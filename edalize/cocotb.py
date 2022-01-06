@@ -1,5 +1,6 @@
 import logging
 import os
+import copy
 import pathlib
 
 import cocotb
@@ -91,6 +92,17 @@ class Cocotb:
         # Run methods that rely on delegation to simulator backend
         extra_env = self._create_environment()
         self.simulator.env.update(extra_env)
+
+    def build(self):
+        extra_env = self._create_environment()
+        try:
+            orig_env = copy.deepcopy(os.environ)
+            os.environ.update(extra_env)
+            self.simulator.build()
+        except Exception as e:
+            raise e
+        finally:
+            os.environ = orig_env 
 
     @classmethod
     def get_doc(cls, api_ver):

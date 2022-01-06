@@ -427,19 +427,6 @@ class Edatool(object):
         logger.debug("Running " + cmd)
         logger.debug("args  : " + " ".join(args))
 
-        # This looks a little odd, but it is necessary in case the OS
-        # environment is updated after the backend is instantiated but before
-        # the tool runs, as in the tests. Making the handling of environments
-        # consistent across backends could resolve this.
-        env = self.env.copy()
-        pythonpath = None
-        if 'PYTHONPATH' in env:
-            pythonpath = env['PYTHONPATH']
-        env.update(os.environ)
-        # Ensure correct pythonpath is used 
-        if pythonpath is not None:
-            env['PYTHONPATH'] = pythonpath 
- 
         capture_output = quiet and not (self.verbose or self.stdout or self.stderr)
         try:
             cp = run(
@@ -450,7 +437,6 @@ class Edatool(object):
                 stderr=self.stderr,
                 capture_output=capture_output,
                 check=True,
-                env=env,
             )
         except FileNotFoundError:
             _s = "Command '{}' not found. Make sure it is in $PATH".format(cmd)

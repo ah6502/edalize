@@ -41,9 +41,6 @@ PLUSARGS      ?= {plusargs}
 VSIM_OPTIONS  ?= {vsim_options}
 EXTRA_OPTIONS ?= $(VSIM_OPTIONS) $(addprefix -g,$(PARAMETERS)) $(addprefix +,$(PLUSARGS))
 
-run-gui: export MODULE = {module}
-run-gui: export PYTHONPATH = {pythonpath}
-
 all: work $(VPI_MODULES)
 
 run: work $(VPI_MODULES)
@@ -171,15 +168,6 @@ class Modelsim(Edatool):
 
         _vsim_options = self.tool_options.get("vsim_options", [])
 
-        if self.env.get("MODULE") is None:
-            _module = ""
-        else:
-            _module = self.env["MODULE"]
-        if self.env.get("PYTHONPATH") is None:
-            _pythonpath = ""
-        else:
-            _pythonpath = self.env["PYTHONPATH"]
-
         _modules = [m["name"] for m in self.vpi_modules]
         _clean_targets = " ".join(["clean_" + m for m in _modules])
         _s = MAKE_HEADER.format(
@@ -189,8 +177,6 @@ class Modelsim(Edatool):
             vsim_options=" ".join(_vsim_options),
             modules=" ".join(_modules),
             clean_targets=_clean_targets,
-            module = _module,
-            pythonpath = _pythonpath,
         )
         vpi_make.write(_s)
 
